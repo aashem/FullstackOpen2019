@@ -1,24 +1,18 @@
 import React from 'react'
+import ListPeople from './listPeople'
 
-
-const ShowPersons= ({persons, filter}) =>{
+const ShowPersons= ({persons, filter, buttonHandler}) =>{
     let showPeople = persons
     if ( filter ){
-      showPeople = persons.filter(person => person.name === filter)
+      showPeople = persons.filter(person => person.name.toLowerCase().includes(filter.toLowerCase()))
       console.log(showPeople, filter)
     }
-      const retPeople = showPeople.map(person => Person(person.name, person.phone))
-      console.log(retPeople)
+
     return(
-      retPeople
+      <ListPeople persons={showPeople}
+       buttonHandler={buttonHandler}/>
     )
   }
   
-  const Person = (name, phone) => {
-  
-    return(
-      <li>{name} {phone}</li>
-    )
-  }
   
   export default ShowPersons

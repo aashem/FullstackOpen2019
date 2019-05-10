@@ -1,31 +1,26 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect} from 'react'
 import PersonForm from './components/personForm'
 import Filter from './components/filter'
-import Axios from 'axios'
 import ShowPersons from './components/showPerson'
+import personsServices from './services/persons'
+
 
 const App = () => {
-
+ 
   const [ persons, setPersons] = useState([]) 
-
   const [ newName, setNewName ] = useState('')
   const [ newPhone, setNewPhone] = useState('')
   const [ filter, setFilter] = useState('')
   const [ newFilter, setNewFilter] = useState('')
 
-
-  const hook = () =>{
-    console.log('effect')
-    Axios
-        .get('http://localhost:3001/persons')
-        .then(response => {
-        console.log('fulfilled')
-        setPersons(response.data)
+  useEffect(()=> {
+    personsServices
+      .getAll()
+      .then(persons => {
+          setPersons(persons)
       })
-  }
-
-
-  useEffect(hook, [])
+      
+  }  , [])
 
   const handleNameChange = (event) => {
     setNewName(event.target.value)
@@ -49,19 +44,39 @@ const App = () => {
   const newPerson = (event) => {
     event.preventDefault()
     if(persons.findIndex(person => person.name === newName) > -1){
-      return(
-        window.alert(`nimi on ${newName} jo käytössä`) 
-      )
+        if(window.confirm(`nimellä on ${newName} jo käytössä numero, haluatko korvata sen?`)){
+          const id = persons.find(person => person.name === newName).id
+          const personObject = {
+            name:  newName,
+            number: newPhone,
+          }
+          personsServices.update(id, personObject)
+        } 
+      
     }else{
+      
       const personObject = {
       name: newName,
-      phone: newPhone,
-    }
+      number: newPhone,
+      }
+    personsServices.create(personObject)
+    console.log(persons)
     setPersons(persons.concat(personObject))
     setNewName('')
     setNewPhone('')
     }
 }
+
+const deletePerson = (event) => {
+  console.log(persons)
+  if(window.confirm(`poistetaanko`)){
+  let id = event.target.value
+    personsServices.deletePerson(id).then(response => {setPersons(persons.filter(person => person.id !== id))}).catch(error=>{'nimi on jo poistettu tietokannasta'})
+  console.log(persons)
+  }
+}
+
+
   return (
     <div>
       <h2>Puhelinluettelo</h2>
@@ -83,6 +98,7 @@ const App = () => {
       <ShowPersons
         persons={persons}
         filter={filter}
+        buttonHandler={deletePerson}
       />
     </div>
   )
