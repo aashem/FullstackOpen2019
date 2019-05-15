@@ -48,34 +48,43 @@ const App = () => {
 
   const newPerson = (event) => {
     event.preventDefault()
-    if(persons.findIndex(person => person.name === newName) > -1){
-        if(window.confirm(`nimellä  ${newName} jo käytössä numero, haluatko korvata sen?`)){
-          const id = persons.find(person => person.name === newName).id
+      
+      if (persons.findIndex(person => person.name === newName) > -1) {
+        if (window.confirm(`${newName} on jo luettelossa, korvataanko vanha numero uudella?`)) {
+          const id = persons.find(p => p.name === newName).id
           const personObject = {
-            name:  newName,
+            name: newName,
             number: newPhone,
           }
-          personsServices.update(id, personObject).catch(error => {
-            const newNotif = {
-              message: 'päivitys epäonnistui, päivitä sivu uudelleen',
-              type: 'error',
-            }
-            setNotif(newNotif)
-            setTimeout(() => setNotif({...notif, message : null}), 5000)
+          personsServices
+            .update(id, personObject)
+            .then(newPerson => {
+              const newState = {
+                message: `Henkilön ${newPerson.name} numero korvattu uudella`,
+                type: 'note'
+              }
+              setNotif(newState)
+              setTimeout(() => {
+                setNotif({...notif, message: null})
+              }, 5000)
+  
+              const newPersons = persons.map(person => person.id !== id ? person : newPerson)
+              setPersons(newPersons)
           })
-          setPersons(persons.concat(personObject))
-          const notifState = {
-            message: 'päivitys onnistui',
-            type: 'note',
-          }
-            personsServices.getAll().then(persons => {setPersons(persons)})
-            setNotif(notifState)
+          .catch(error => {
+            const newState = {
+              message: `Henkilö ${personObject.name} on jo poistettu tietokannasta`,
+              type: 'error'
+            }
+            setNotif(newState)
             setTimeout(() => {
-						setNotif({...notif, message: null})
-						}, 5000)
-        } 
-      
-    }else{
+              setNotif({...notif, message: null})
+            }, 5000)
+  
+            setPersons(persons.filter(p => p.id !== id))
+          })
+        }
+      }else{
       
       const personObject = {
       name: newName,
