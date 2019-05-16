@@ -65,8 +65,8 @@ describe('total likes of blogs', () => {
 })
 
 describe('Blog with most likes', () => {
-    test("most likes function", () => {
-        const result = listHelper.mostLikes(listWithBlogs)
+    test("favouriteBlog returns blogObject with most likes", () => {
+        const result = listHelper.favouriteBlog(listWithBlogs)
         expect(result).toEqual([{
             _id: "5a422b3a1b54a676234d17f9",
             title: "Canonical string reduction",

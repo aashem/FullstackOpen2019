@@ -13,10 +13,10 @@ const totalLikes = (listWithBlogs) => {
     return(total)
 }
 
-const mostLikes = (listWithBlogs) => {
+const favouriteBlog = (listWithBlogs) => {
     const likeList = listWithBlogs.map(likes => likes.likes)
     let mostLikedBlog = listWithBlogs.filter(like => like.likes === Math.max(...likeList))
     return (mostLikedBlog)
 }
 
-module.exports = {dummy, totalLikes, mostLikes}
+module.exports = {dummy, totalLikes, favouriteBlog}
