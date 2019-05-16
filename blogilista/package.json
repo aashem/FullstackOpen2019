@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "watch": "nodemon index.js"
+    "watch": "nodemon index.js",
+    "test": "jest --verbose"
   },
   "author": "Asla Shemeikka",
   "license": "ISC",
@@ -14,7 +15,11 @@
     "cors": "^2.8.5",
     "dotenv": "^8.0.0",
     "express": "^4.16.4",
+    "jest": "^24.8.0",
     "mongoose": "^5.5.8",
     "nodemon": "^1.19.0"
+  },
+  "jest": {
+    "testEnvironment": "node"
   }
 }
