@@ -6,8 +6,8 @@ const mongoose = require('mongoose')
 const config = require('./utils/config')
 const blogsRouter = require('./controllers/blogs')
 
+let mongoUrl = config.MONGOURI
 
-  const mongoUrl = config.MONGOURI
   mongoose.connect(mongoUrl, { useNewUrlParser: true })
   console.log("Connected to database")
   

@@ -1,7 +1,7 @@
 const blogsRouter = require('express').Router()
 const Blog = require('../models/blog')
 
-blogsRouter.get('/', (request, response) => {
+blogsRouter.get('/',(request, response) => {
     Blog
       .find({})
       .then(blogs => {
@@ -12,13 +12,19 @@ blogsRouter.get('/', (request, response) => {
 blogsRouter.post('/', (request, response) => {
     const blog = new Blog(request.body)
     console.log(blog)
-  
+    if (blog.likes !== Number){
+      blog.likes = 0
+    }
+    if(blog.title && blog.url !== String){
+      response.status(400).end()
+    }else{
+
     blog
       .save()
       .then(result => {
         response.status(201).json(result)
       })
-      .catch(console.error("no content"))
+    }
   })
 
 blogsRouter.get('/:id', (request, response) => {
@@ -35,6 +41,16 @@ blogsRouter.get('/:id', (request, response) => {
     .catch(error => {
       console.log(`request rejected for id:${request.params.id} | not found`)
     })
+})
+
+blogsRouter.delete('/:id', (request, response) => {
+
+  Blog
+    .findByIdAndDelete(request.params.id)
+    .then(blog => {
+      response.json(blog.toJSON())
+    })
+    .catch(console.error("FAILURE"))
 })
 
 
