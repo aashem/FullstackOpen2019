@@ -10,7 +10,7 @@ const initialBlogs = [
     title: "Gary Vaynerchuk's blog",
     author: "Gary Vaynerchuk",
     url: "https://www.garyvaynerchuk.com/",
-    likes: 2000,
+    likes: 2000,    
     },
     {
     title: "React patterns",
