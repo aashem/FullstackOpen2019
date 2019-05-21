@@ -10,21 +10,14 @@ blogsRouter.get('/', async(request, response) => {
     await response.json(result)
   })
   
-const getTokenFrom = request => {
-  const authorization = request.get('authorization')
-  if (authorization && authorization.toLowerCase().startsWith('bearer ')){
-    return authorization.substring(7)
-  }
-  return null
-}
 
-blogsRouter.post('/', async(request, response) => {
+blogsRouter.post('/', async(request, response, next) => {
     const body = request.body
-    const token = getTokenFrom(request)
+    let token = request.token
 
     try{
       console.log(token)
-      const decodedToken = jwt.verify(token, config.SECRET)
+      const decodedToken = jwt.verify(request.token, config.SECRET)
       console.log(decodedToken)
       if(!token || !decodedToken.id){
         return response.status(401).json({error: "invalid token" })
@@ -49,8 +42,9 @@ blogsRouter.post('/', async(request, response) => {
         user.blogs = user.blogs.concat(result._id)
         await user.save()
         response.json(result)
-    }catch(exception){
+    }catch{
         response.status(400)
+        next()
     }
 
   })
@@ -72,9 +66,30 @@ blogsRouter.get('/:id', (request, response) => {
 })
 
 blogsRouter.delete('/:id', async(request, response) => {
+  let token = request.token
+  let fullBlog = await Blog.findById(request.params.id)
+  let user = fullBlog.user.toString()
+ 
 
-  const result = await Blog.findByIdAndDelete(request.params.id)
-  await response.json(result.toJSON())
+
+
+  try{
+    const decodedToken = jwt.verify(token, config.SECRET)
+    if(!token || !decodedToken){
+      return response.status(401).json({error: 'invalid token'})
+    }
+    if( user === decodedToken.id){
+      const result = await Blog.findByIdAndDelete(request.params.id)
+      await response.json(result.toJSON())
+    }
+    else{
+      response.status(401).end("Not authorized to delete this blog")
+    }
+  }catch{
+    response.status(401)
+    next()
+
+  }
 
 })
 
