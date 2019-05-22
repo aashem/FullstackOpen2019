@@ -13,12 +13,12 @@ blogsRouter.get('/', async(request, response) => {
 
 blogsRouter.post('/', async(request, response, next) => {
     const body = request.body
+    console.log(body)
     let token = request.token
 
     try{
-      console.log(token)
       const decodedToken = jwt.verify(request.token, config.SECRET)
-      console.log(decodedToken)
+      console.log(decodedToken.id)
       if(!token || !decodedToken.id){
         return response.status(401).json({error: "invalid token" })
       }
@@ -36,6 +36,10 @@ blogsRouter.post('/', async(request, response, next) => {
 
       if (blog.likes === null){
         blog.likes = 0
+      }
+
+      if (blog.author.length === 0 || blog.title.length === 0){
+        return response.status(400).end()
       }
       
         const result = await blog.save()
@@ -94,9 +98,19 @@ blogsRouter.delete('/:id', async(request, response) => {
 })
 
 blogsRouter.put('/:id', async (request, response) => {
+  let token = request.token
 
-  const result = await Blog.findByIdAndUpdate(request.params.id, request.bodyc)
+  let decodedToken = jwt.verify(token, config.SECRET)
+  if(!token || !decodedToken){
+    return response.status(401).json({error : 'invalid token'})
+  }
+  try{
+  const result = await Blog.findByIdAndUpdate(request.params.id, request.body )
   await response.json(result.toJSON())
+  }catch{
+    response.status(401)
+    next()
+  }
 })
 
 

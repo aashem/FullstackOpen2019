@@ -3,7 +3,8 @@ import blogService from './services/blogs'
 import ShowBlogs from './components/showBlogs'
 import loginService from './services/login'
 import Notification from './components/notification'
-
+import LoginForm from './components/loginForm'
+import BlogForm from './components/blogForm'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -17,6 +18,7 @@ const App = () => {
     message: null,
     type:null,
   })
+
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -123,66 +125,33 @@ const App = () => {
   const handleUrlChange = (event) => {
     setUrl(event.target.value)
   }
-
-
-  
-  const loginForm = () => {
-    return(
-      <form onSubmit={handleLogin}>
-        <div>
-          käyttäjätunnus
-          <input 
-            type='text' 
-            value={username}
-            name='Username' 
-            onChange={handleUsernameChange}/>
-          <p></p>
-          </div>
-          <div>
-          salasana
-            <input
-              type="password"
-              value={password}
-              name="Password"
-              onChange={handlePasswordChange}
-          />
-          </div>
-        <button type="submit">kirjaudu</button>
-      </form>
-    )
+  const likeHandler = async (event) => {
+    console.log(event.target.value)
+    event.preventDefault()
+    let likedBlog = blogs.find(blog => blog.id === event.target.value)
+    likedBlog.likes++
+    try{
+      blogService.update(likedBlog.id, likedBlog)
+      let notifState = {
+        message: `You liked ${likedBlog.title}`,
+        type: "success"
+      }
+      setNotif(notifState)
+      setTimeout(() => {
+        setNotif({...notif, message:null})
+      }, 5000)
+    }catch(exception){
+      let notifState = {
+        message: 'Like failed',
+        type:'error'
+      }
+      setNotif(notifState)
+      setTimeout(() => {
+        setNotif({...notif, message:null})
+      },5000)
+    }
   }
 
-  const blogForm = () => {
-    return(<form onSubmit = {addBlog}>
-        <div>
-          <p>Title</p>
-        <input
-          type ='text'
-          value={title}
-          onChange={handleTitleChange}
-        />
-        </div>
-        <div>
-          <p>Author</p>
-        <input
-          type ="text"
-          value={author}
-          onChange={handleAuthorChange}
-          />
-        </div>
-        <div>
-          <p>Url</p>
-        <input
-          type = "text"
-          value={url}
-          onChange={handleUrlChange}
-        />
-        </div>
-          <button type='submit'>Tallena uusi blogi</button>
-
-    </form>
-    )
-  }
 
   return (
     <div>
@@ -191,11 +160,28 @@ const App = () => {
       {user !== null &&
       <ShowBlogs 
       blogs={blogs}
-      username={user.username}/> 
+      username={user.username}
+      likeHandler={likeHandler}
+      /> 
       }
       {user === null ?
-      loginForm():
-      blogForm()
+      <LoginForm
+      username = {username}
+      password = {password}
+      handleSubmit = {handleLogin}
+      handleUsernameChange = {handleUsernameChange}
+      handlePasswordChange = {handlePasswordChange}
+      /> :
+      <BlogForm 
+      addBlog = {addBlog}
+      handleAuthorChange = {handleAuthorChange}
+      handleTitleChange = {handleTitleChange}
+      handleUrlChange = {handleUrlChange}
+      title = {title}
+      author = {author}
+      url = {url}
+      />
+
       }
     </div>
   )
