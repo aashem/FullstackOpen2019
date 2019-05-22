@@ -18,12 +18,12 @@ const App = () => {
     message: null,
     type:null,
   })
-
+ 
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
       setBlogs( blogs )
-    )  
+    )
   }, [])
 
   useEffect(() => {
@@ -120,10 +120,13 @@ const App = () => {
 
   const handleAuthorChange = (event) => {
     setAuthor(event.target.value)
+    console.log(blogs.likes)
   }
 
   const handleUrlChange = (event) => {
     setUrl(event.target.value)
+    let sortedBlogs = blogs.sort((a, b) => {return b.likes - a.likes})
+    console.log(sortedBlogs)
   }
   const likeHandler = async (event) => {
     console.log(event.target.value)
