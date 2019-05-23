@@ -18,6 +18,7 @@ const App = () => {
     message: null,
     type:null,
   })
+
  
 
   useEffect(() => {
@@ -125,16 +126,17 @@ const App = () => {
 
   const handleUrlChange = (event) => {
     setUrl(event.target.value)
-    let sortedBlogs = blogs.sort((a, b) => {return b.likes - a.likes})
-    console.log(sortedBlogs)
+    
+
   }
   const likeHandler = async (event) => {
-    console.log(event.target.value)
     event.preventDefault()
     let likedBlog = blogs.find(blog => blog.id === event.target.value)
     likedBlog.likes++
     try{
-      blogService.update(likedBlog.id, likedBlog)
+      await blogService.update(likedBlog.id, likedBlog)
+      let newList = await blogService.getAll()
+      setBlogs(newList)
       let notifState = {
         message: `You liked ${likedBlog.title}`,
         type: "success"
@@ -154,7 +156,23 @@ const App = () => {
       },5000)
     }
   }
+  const removeHandler = async(event) => {
+    event.preventDefault()
+    console.log(event.target.value)
+    let removedBlog = blogs.find(blog => blog.id === event.target.value)
+    console.log(removedBlog)
+    if(window.confirm("delete BLOG?")){
 
+      try{
+        await blogService.remove(removedBlog.id)
+        let newList = await blogService.getAll()
+        setBlogs(newList)
+      }catch{
+        console.log('failed')
+      }
+    }
+    
+  }
 
   return (
     <div>
@@ -165,6 +183,8 @@ const App = () => {
       blogs={blogs}
       username={user.username}
       likeHandler={likeHandler}
+      removeHandler={removeHandler}
+      user = {user}
       /> 
       }
       {user === null ?

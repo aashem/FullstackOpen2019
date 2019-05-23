@@ -6,9 +6,9 @@ const logout = () =>{
     window.localStorage.clear()
 }
 
-const ShowBlogs = ({blogs, username, likeHandler}) => {
+const ShowBlogs = ({blogs, username, likeHandler, removeHandler, user}) => {
     let sortedBlogs = blogs.sort((a, b) => {return b.likes - a.likes})
-    const bList = sortedBlogs.map(blog => <Blog key = {blog.id} blog = {blog} likeHandler = {likeHandler}/>)
+    const bList = sortedBlogs.map(blog => <Blog key = {blog.id} blog = {blog} likeHandler = {likeHandler} removeHandler = {removeHandler} currUser = {user}/>)
     return(
 
             <form onSubmit={logout}>

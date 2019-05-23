@@ -1,20 +1,40 @@
 import React, {useState} from 'react'
 
 
-const Blog = ({ blog, likeHandler  }) => {
+const Blog = ({ blog, likeHandler , removeHandler, currUser }) => {
   const [visible, setVisible] = useState(false)
+  const [delVisible, setDelVisible] =useState(false)
   let user = blog.user
   let username = user.map(u => u.username)
 
   const toggleVisibility = (event) => {
+    toggleDelete()
     event.preventDefault()
-    console.log(username)
     if(visible === false){
       setVisible(true)
     }else{
       setVisible(false) 
   }
 }
+
+const toggleDelete = () => {
+  let user = blog.user
+  let username = user.map(u => u.username)
+  let currUsername = currUser.username
+  console.log(currUsername)
+  console.log(username.toString() )
+
+  if (username.toString() === currUsername) {
+    setDelVisible(true)
+  }else{
+    setDelVisible(false)
+  }
+} 
+
+
+  const showDelete = {
+    display : delVisible ? "": "none",
+  }
 
   const showMore = {
     display : visible ? '' : "none",
@@ -36,8 +56,11 @@ const Blog = ({ blog, likeHandler  }) => {
     <button onClick={likeHandler} value={blog.id}>like</button>
     <p>{blog.url}</p>
     <p>Added By {username}</p>
+    <div style= {showDelete}>
+      <button onClick={removeHandler} value={blog.id}>Delete blog</button>
     </div>
-    <button onClick={toggleVisibility} >Show</button>
+    </div>
+    <button onClick={toggleVisibility}>Show</button>
   </div>
   )
   }
