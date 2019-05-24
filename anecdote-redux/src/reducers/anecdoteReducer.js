@@ -40,8 +40,6 @@ export const voteAnecdote = (id) => {
 const initialState = anecdotesAtStart.map(asObject)
 
 const reducer = (state = initialState, action) => {
-  console.log(state)
-  console.log(action.data)
   switch (action.type){
     case 'VOTE': 
       let id = action.data.id

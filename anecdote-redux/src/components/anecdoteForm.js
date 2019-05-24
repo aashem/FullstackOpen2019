@@ -1,6 +1,6 @@
 import React from 'react'
 import {createAnecdote} from '../reducers/anecdoteReducer'
-
+import {changeMessage} from '../reducers/notificationReducer'
 
 
 const AnecdoteForm = (props) => {
@@ -8,7 +8,10 @@ const AnecdoteForm = (props) => {
     const create = (event) =>{
         event.preventDefault()
         props.store.dispatch(
-          createAnecdote(event.target.anecdote.value)
+          createAnecdote(event.target.anecdote.value, 5000)
+        )
+        props.store.dispatch(
+            changeMessage('Anecdote added', 5000)
         )
       }
     
