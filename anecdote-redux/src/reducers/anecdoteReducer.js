@@ -1,3 +1,4 @@
+import anecdoteService from '../services/anecdotes'
 
 const getId = () => (100000 * Math.random()).toFixed(0)
 
@@ -35,14 +36,12 @@ const anectodeReducer = (state = [], action) => {
   console.log(state)
   switch (action.type){
     case 'VOTE': 
-      let id = action.data.id
-      const anecVoted = state.find(a => a.id === id)
-      anecVoted.votes++
-      let sortedState = state.sort((a,b)=> b.votes-a.votes)
-      console.log(anecVoted)
-      state = sortedState
+    let id = action.data.id
+    const anecVoted = state.find(a => a.id === id)
+    anecVoted.votes++ 
       return state
     case 'CREATE':
+      anecdoteService.create(action.data).then()
       return [...state, action.data]
     case 'INIT_ANECDOTES':
       console.log(action.data)
