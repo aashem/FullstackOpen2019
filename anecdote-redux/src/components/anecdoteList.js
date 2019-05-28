@@ -9,10 +9,11 @@ const AnecdoteList = props => {
     
 
     const vote = id => {
-        console.log('vote', id)
-        console.log(props.anecdotes)
-        props.voteAnecdote(id)
-        props.changeMessage('Anectode voted', 5000)
+        let votedAnectode = props.anecdotes.find(a => a.id === id)
+        console.log(votedAnectode)
+        votedAnectode.votes++
+        props.voteAnecdote(votedAnectode, id)
+        props.changeMessage('Anectode voted', 5)
             
     
     }

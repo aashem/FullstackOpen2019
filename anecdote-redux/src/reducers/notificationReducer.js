@@ -19,6 +19,7 @@ export const clearMessage = () => {
 }
 
 export const changeMessage = (message,timeout) => {
+    timeout = timeout * 1000
     return{
         type:'SET_NOTIF',
         data: {

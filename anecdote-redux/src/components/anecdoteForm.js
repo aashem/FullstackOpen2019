@@ -7,8 +7,8 @@ const AnecdoteForm = (props) => {
 
     const create = (event) =>{
         event.preventDefault()
-        props.createAnecdote(event.target.anecdote.value, 5000)
-        props.changeMessage('Anecdote added', 5000)
+        props.createAnecdote(event.target.anecdote.value)
+        props.changeMessage('Anecdote added', 5)
         
       }
     
