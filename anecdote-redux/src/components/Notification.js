@@ -1,20 +1,19 @@
 import React, {useEffect} from 'react';
 import {clearMessage} from '../reducers/notificationReducer'
-
+import {connect} from 'react-redux'
 
 
 const Notification = (props) => {
-  let content = props.store.getState().notification.content
-  let time = props.store.getState().notification.timeout
-  console.log(typeof ime)
-  console.log(time)
+  let content = props.content
+  let time = props.timeout
+
 
 
   useEffect(()=> {
     setTimeout(()=> {
-      props.store.dispatch(clearMessage())
+      props.clearMessage()
     },time)
-  }, [props.store.getState().notification.timeout])
+  }, [props.timeout])
 
   const style = {
     border: 'solid',
@@ -29,5 +28,19 @@ const Notification = (props) => {
   }
   return(<div style={style}>{content}</div>)
 }
+const mapStateToProps = state =>{
+  return{
+    content: state.notification.content,
+    timeout: state.notification.timeout
+  }
 
-export default Notification
+}
+
+const mapDispatchToState = {
+  clearMessage
+}
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToState
+)(Notification)

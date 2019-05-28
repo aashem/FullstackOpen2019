@@ -1,25 +1,35 @@
 import React from 'react'
 import {setFilter} from '../reducers/filterReducer'
+import {connect} from 'react-redux'
 
-const Filter = (props) => {
+const Filter = props => {
 
-    const filter = (event) => {
+    const filter = event => {
         event.preventDefault()
-        props.store.dispatch(
-          setFilter(event.target.value)
-        )
+        props.setFilter(event.target.value)
       }
 
     return (
         <div>
         <form onSubmit={filter}>
             <div>
+                Filter:
                 <input name="filter" onChange={filter} />
             </div>
         </form>
         </div>
     )
 }
+const mapStateToProps = () => {
+    return {}
+}
+
+const mapDispatchToProps = {
+    setFilter,
+}
 
 
-export default Filter
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(Filter)
