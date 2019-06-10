@@ -1,62 +1,81 @@
 import React from 'react'
-import {connect} from 'react-redux'
+import {connect} from "react-redux"
+import loginServices from '../services/loginServices';
+import blogService from '../services/blogServices'
+import {addUser, logout} from '../reducers/loginReducer'
 import {changeMessage} from '../reducers/notificationReducer'
-import {addUser} from '../reducers/userReducer'
-import loginService from '../services/login'
-import blogService from '../services/blogs'
 
+const LoginForm = props => {    
+    console.log(props.user.username)
 
+    const logout = (event) => {
+        event.preventDefault()
+        window.localStorage.clear()
+        props.logout()
+        props.changeMessage("Logged out")
+    }
 
-const LoginForm = (props) => {
-  
-  
-  const handleLogin = async (event) => {
-    event.preventDefault()
-    event.persist()
-    try{
-    let user = await loginService.login({
-      username: event.target.username.value,
-      password: event.target.password.value
-    })
-    event.target.reset()
-    props.addUser(user) 
-    props.changeMessage(`Welcome back ${user.username}`, 5)
-    window.localStorage.setItem(
-      'loggedBlogAppUser', JSON.stringify(user)
-    )
-    blogService.setToken(user.token)
-  }catch{
-    props.changeMessage('Wrong username or password', 5)
-  }
- 
-  }
+    const login = async (event) => {
+        event.preventDefault()
+        event.persist()
+        try{
+        let user = await loginServices.login({
+            username: event.target.username.value,
+            password: event.target.password.value
+        })
+        event.target.reset()
+        blogService.setToken(user.token)
+        window.localStorage.setItem(
+            'loggedInUser', JSON.stringify(user)
+            )
+        console.log(user)
+        props.addUser(user)
+        props.changeMessage(`Logged in as ${user.username}`, 5)
 
-  return(
-    <form onSubmit = {handleLogin}>
-      <div>
-        <p>Username:</p>
-        <input name ='username'/>
-        <p>Password:</p
-        ><input type= 'password' name = 'password'/>
-        <p></p><button type = 'submit'>Login</button>
-      </div>
-    </form>
+    }catch{
+        return
+    }
+
+    }
+
+    if(!props.user.username){
+        return (
+            <form onSubmit= {login}>
+                <div>
+                    <b>username</b>
+                    <input name = 'username'>
+                    </input>
+                    <p></p>
+                    <b>password</b>
+                    <input type = 'password' name = 'password'>
+                    </input>
+                    <button type = 'submit'>Login</button>
+                </div>
+            </form>
         )
-
+    }else{
+        return (
+            <div>
+                <button onClick={logout}>Logout</button>
+            </div>
+        )
+    }
+   
 }
 
 const mapStateToProps = state => {
-  return{
-  user: state.user
-  }
+    return{
+    user: state.current_user
+    }
 }
 
 const mapDispatchToProps = {
-  changeMessage,
-  addUser
+    addUser,
+    changeMessage,
+    logout
 }
 
 export default connect(
-  mapStateToProps,
-  mapDispatchToProps
+    mapStateToProps,
+    mapDispatchToProps
 )(LoginForm)

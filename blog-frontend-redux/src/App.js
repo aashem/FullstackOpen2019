@@ -1,111 +1,108 @@
-import React, { useState, useEffect } from 'react'
-import blogService from './services/blogs'
-import ShowBlogs from './components/showBlogs'
-import Notification from './components/notification'
-import BlogForm from './components/blogForm'
-import LoginForm from './components/loginForm'
-import {changeMessage} from './reducers/notificationReducer'
+import React,{useEffect} from 'react';
 import {connect} from 'react-redux'
 import {initializeBlogs} from './reducers/blogReducer'
+import ListBlogs from './components/listBlogs'
+import BlogForm from './components/blogForm'
+import LoginForm from './components/loginForm'
+import {addUser} from './reducers/loginReducer'
+import Notification from './components/notification'
+import blogServices from './services/blogServices'
+import {changeMessage} from './reducers/notificationReducer'
+import ListUsers from './components/listUsers'
+import {initializeUsers} from './reducers/userReducer'
+import {BrowserRouter as Router, Route, Link } from 'react-router-dom'
+import UserInfo from './components/userInfo'
 
-const App = (props) => {
-  const [blogs, setBlogs] = useState([])
-  const [user, setUser] = useState(null)
+const App = props => {
+
 
  
-
   useEffect(() => {
     props.initializeBlogs()
-    setBlogs(props.blogs)
-  }, [props.blogs])
+    props.initializeUsers()
+}, [])
 
   useEffect(() => {
-    const loggedUserJSON = window.localStorage.getItem('loggedBlogAppUser')
+    const loggedUserJSON = window.localStorage.getItem('loggedInUser')
     if(loggedUserJSON){
       let user = JSON.parse(loggedUserJSON)
-      setUser(user)
-      blogService.setToken(user.token)
-    }
-  })
- 
-
-
-
-
-  const likeHandler = async (event) => {
-    event.preventDefault()
-    let likedBlog = blogs.find(blog => blog.id === event.target.value)
-    likedBlog.likes++
-    try{
-      await blogService.update(likedBlog.id, likedBlog)
-      let newList = await blogService.getAll()
-      setBlogs(newList)
-      props.changeMessage(`Vote Succesful`, 5)
-    }catch(exception){
-      props.changeMessage('Vote Failed', 5)
-    }
+      blogServices.setToken(user.token)
+      props.addUser(user)
+      props.changeMessage(`welcome back ${user.username}`, 5)
   }
-  const removeHandler = async(event) => {
-    event.preventDefault()
-    console.log(event.target.value)
-    let removedBlog = blogs.find(blog => blog.id === event.target.value)
-    console.log(removedBlog)
-    if(window.confirm("delete BLOG?")){
+}, [])
 
-      try{
-        await blogService.remove(removedBlog.id)
-        let newList = await blogService.getAll()
-        setBlogs(newList)
-        props.changeMessage('Blog Removed', 5)
-      }catch{
-        console.log('failed')
-      }
-    }
-    
-  }
-
-  if (user === null){
-    return(
-      
-        <div>
-          <h1>Login</h1>
-          <Notification/>
-          <LoginForm/>
-      </div>
-    )
-  }else{
-
+const blogsPage = () => {
   return (
     <div>
-      <h2>BLOG-APP</h2>
-      <Notification/>
-      <ShowBlogs 
-      blogs={blogs}
-      username={user.username}
-      likeHandler={likeHandler}
-      removeHandler={removeHandler}
-      user = {user}
-      /> 
-      <BlogForm/>
-
+    <ListBlogs/>
+    <BlogForm/>
     </div>
   )
 }
+
+
+const usersPage = () => {
+  return (
+  <div>
+    <ListUsers/>
+  </div>)
 }
 
-const mapStateToProps = state => {
-  return{
-    user: state.user,
-    blogs: state.blogs,
+
+
+  if(!props.user.username){
+  return (
+    <div>
+    <Notification/>
+    <LoginForm/>
+    </div>
+  )
+  }else{
+    return(
+      <Router>
+      <div>
+        <Header/>
+        <Notification/>
+        <LoginForm/>
+        <Route exact path = '/' component = {blogsPage}/>
+        <Route path = '/users' component ={usersPage}/>
+        
+      </div>
+      </Router>
+    )
   }
+
+}
+
+
+const Header = () => {
+  return (
+    <ul>
+      <li>
+        <Link to = '/'>Blogs</Link>
+      </li>
+      <li>
+        <Link to = 'users'>Users</Link>
+      </li>
+    </ul>  
+  )
+}
+const mapStateToProps = state => {
+  return{ 
+    user: state.current_user
+  }
+
 }
 
 const mapDispatchToProps = {
-  changeMessage,
-  initializeBlogs
+  initializeBlogs,
+  initializeUsers,
+  addUser,
+  changeMessage
 }
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps,
+  mapDispatchToProps
 )(App)
