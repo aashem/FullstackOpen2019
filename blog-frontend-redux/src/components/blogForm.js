@@ -1,42 +1,62 @@
-import React from 'react'
-import {connect} from 'react-redux'
+import React from 'react' 
 import {createBlog} from '../reducers/blogReducer'
-
+import {changeMessage} from '../reducers/notificationReducer'
+import {connect} from 'react-redux'
 const BlogForm = props => {
 
-    const addBlog = event => {
-        event.preventDefault()
-        console.log(event.target.title.value)
-        let blog = {
-            author: event.target.author.value,
-            title: event.target.title.value,
-            url: event.target.url.value,
-        }
-        props.createBlog(blog)
-        event.target.reset()
-    }
-    return(
-        <form onSubmit = {addBlog}>
-            <div>
-                <p >Author</p>
-                <input name ='author'>
-                </input>
-                <p>Title</p>
-                <input name = 'title'>
-                </input>
-                <p>Url</p>
-                <input name = 'url'>
-                </input>
-                <button type='submit'>Add</button>
-            </div>
-        </form>
-    )
+
+
+const addBlog = (event) => {
+  event.preventDefault()
+  let newBlog = {
+    title: event.target.title.value,
+    author: event.target.author.value,
+    url: event.target.url.value
+  } 
+  props.createBlog(newBlog)
+  props.changeMessage('blog added', 5)
+  event.target.reset()
 }
 
-const mapDispatchToProps = {
-    createBlog
-}
+
+
+    return(
+    <form onSubmit = {addBlog}>
+        <div>
+          <p>Title</p>
+        <input
+         name = 'title'
+        />
+        </div>
+        <div>
+          <p>Author</p>
+        <input
+          name = 'author'
+          />
+        </div>
+        <div>
+          <p>Url</p>
+        <input
+          name = 'url'
+        />
+        </div>
+          <button type='submit'>Tallena uusi blogi</button>
+
+    </form>
+    )
+  }
+
+  const mapStateToProps = () =>{
+    return{}
+  }
+
+  const mapDispatchToProps = {
+    createBlog,
+    changeMessage
+  }
+
+
 export default connect(
-    null,
-    mapDispatchToProps
+  mapStateToProps,
+  mapDispatchToProps
 )(BlogForm)

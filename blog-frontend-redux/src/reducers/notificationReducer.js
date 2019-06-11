@@ -1,11 +1,9 @@
-import {CHANGEMSG, CLEAR} from './reducerTypes'
-
-const notificationReducer = (state = ({content: "", timeout: 0}), action) => {
+const notificationReducer = (state = ({content:'', timeout: 0}), action) => {
     switch(action.type){
-        case CHANGEMSG:
+        case 'SET_NOTIF':
             return action.data
-        case CLEAR:
-            return {
+        case 'CLEAR_NOTIF':
+            return{
                 content: '',
                 timeout: 0
             }
@@ -14,21 +12,20 @@ const notificationReducer = (state = ({content: "", timeout: 0}), action) => {
     }
 }
 
-export const clearNotif = () => {
-    return {
-        type: CLEAR,
+export const clearMessage = () => {
+    return{
+        type:'CLEAR_NOTIF'
     }
 }
 
 export const changeMessage = (message, timeout) => {
-    timeout = timeout *1000
+    timeout = timeout * 1000
     return{
-        type: CHANGEMSG,
-        data: {
+        type:'SET_NOTIF',
+        data:{
             content: message,
-            timeout: timeout
+            timeout
         }
     }
 }
-
 export default notificationReducer

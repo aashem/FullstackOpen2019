@@ -1,59 +1,43 @@
-import blogServices from '../services/blogServices'
-import { INIT_BLOGS, VOTE, DELETE, CREATE } from '../reducers/reducerTypes'
+import blogService from '../services/blogs'
 
 const blogReducer = (state = [], action) => {
     switch(action.type){
-        case INIT_BLOGS:
+        case 'INIT_BLOGS':
             return action.data
-        case CREATE:
-            return [...state, action.data]
-        case VOTE:
-            return [...state]
-        case DELETE:
-            return [...state]
+        case 'ADD_BLOG':
+            return [...state, action.data]  
+        case 'DEL_BLOG':
+            return state  
         default:
             return state
-       
     }
 }
 
 export const initializeBlogs = () => {
     return async dispatch => {
-        let blogs = await blogServices.getAll()
+        let blogs = await blogService.getAll()
         dispatch({
-            type: INIT_BLOGS,
+            type: 'INIT_BLOGS',
             data: blogs
         })
     }
 }
 
-export const voteBlog = (id, newBlog) => {
+export const createBlog = (content) => {
     return async dispatch => {
-        newBlog.likes++
-        let blogs = await blogServices.update(id, newBlog)
+        let blog = await blogService.create(content)
         dispatch({
-            type: VOTE,
-            data: blogs
+            type:'ADD_BLOG',
+            data: blog
         })
     }
 }
 
 export const deleteBlog = (id) => {
     return async dispatch => {
-        let blogs = await blogServices.remove(id)
+        await blogService.remove(id)
         dispatch({
-            type:DELETE,
-            data: blogs
-        })
-    }
-}
-
-export const createBlog = (newBlog) => {
-    return async dispatch => {
-        let blog = await blogServices.create(newBlog)
-        dispatch({
-            type: CREATE,
-            data: blog
+            type:'DEL_BLOG',
         })
     }
 }

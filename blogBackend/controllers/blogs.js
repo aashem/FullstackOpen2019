@@ -5,8 +5,9 @@ const jwt = require('jsonwebtoken')
 const config = require('../utils/config')
 
 
+
 blogsRouter.get('/', async(request, response) => {
-    const result = await Blog.find({}).populate('user', {username:1, name:1})
+    const result = await Blog.find({}).populate('user', {username:1, name:1}).populate('comment', {content:8})
     await response.json(result)
   })
   
@@ -34,7 +35,7 @@ blogsRouter.post('/', async(request, response, next) => {
         user: user.id
       })
 
-      if (blog.likes === null){
+      if (blog.likes === undefined){
         blog.likes = 0
       }
 
