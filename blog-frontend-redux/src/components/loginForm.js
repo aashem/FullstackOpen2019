@@ -28,7 +28,6 @@ const LoginForm = props => {
         window.localStorage.setItem(
             'loggedInUser', JSON.stringify(user)
             )
-        console.log(user)
         props.addUser(user)
         props.changeMessage(`Logged in as ${user.username}`, 5)
 

@@ -11,7 +11,7 @@ import {changeMessage} from './reducers/notificationReducer'
 import ListUsers from './components/listUsers'
 import {initializeUsers} from './reducers/userReducer'
 import {BrowserRouter as Router, Route, Link } from 'react-router-dom'
-import UserInfo from './components/userInfo'
+
 
 const App = props => {
 
@@ -36,7 +36,6 @@ const blogsPage = () => {
   return (
     <div>
     <ListBlogs/>
-    <BlogForm/>
     </div>
   )
 }
@@ -47,6 +46,14 @@ const usersPage = () => {
   <div>
     <ListUsers/>
   </div>)
+}
+
+const createBlog = () => {
+  return(
+    <div>
+      <BlogForm/>
+    </div>
+  )
 }
 
 
@@ -65,8 +72,9 @@ const usersPage = () => {
         <Header/>
         <Notification/>
         <LoginForm/>
-        <Route exact path = '/' component = {blogsPage}/>
+        <Route exact path = '/blogs' component = {blogsPage}/>
         <Route path = '/users' component ={usersPage}/>
+        <Route path = '/createBlog' component = {createBlog}/>
         
       </div>
       </Router>
@@ -80,10 +88,13 @@ const Header = () => {
   return (
     <ul>
       <li>
-        <Link to = '/'>Blogs</Link>
+        <Link to = '/blogs'>Blogs</Link>
       </li>
       <li>
-        <Link to = 'users'>Users</Link>
+        <Link to = '/users'>Users</Link>
+      </li>
+      <li>
+        <Link to = '/createBlog'>Create New</Link>
       </li>
     </ul>  
   )

@@ -4,16 +4,16 @@ import {BrowserRouter as Router, Link, Route} from 'react-router-dom'
 
 const ListUsers = props => {
    
-
     const userList = ({match}) => {
         let usersList = props.users.map(u =>
             <div key = {u.id}>
                <Link to = {`${match.path}/${u.username}`}>{u.username}</Link>
                 <p>Blogs Created {u.blogs.length}</p>
            </div>)
-        return (<div>
+        return (
+        <div>
             {usersList} 
-            </div>
+        </div>
         )
     }
 
@@ -21,16 +21,18 @@ const ListUsers = props => {
         return (
         <div>
             <Route path = {`${match.url}/:u`} component = {userInfo}/>
-            </div>
+        </div>
         )
     }
 
     const userInfo = ({match}) => {
         console.log(match.params.u)
         let user = findUser(match.params.u)
-        return <div>
-        {user}
+        return (
+        <div>
+            {user}
         </div>
+        )
     } 
 
     const findUser = (username) => {
@@ -49,14 +51,18 @@ const ListUsers = props => {
                  <p>Username: {u.username}</p>
                  <p>Name : {u.name}</p>
              </div>)
-       return(<div>{userInfo}Blogs: {blogsList}</div>)
+       return( 
+        <div>    
+            {userInfo}Blogs: {blogsList}
+        </div>
+        )
     }
 
     return (
     <div>
         <Router>
-        <Route exact path = '/users' component = {userList}/>
-        <Route path = '/users' component = {singleUser}/>
+            <Route exact path = '/users' component = {userList}/>
+            <Route path = '/users' component = {singleUser}/>
         </Router>
     </div>)
 }
