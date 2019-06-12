@@ -1,77 +1,119 @@
-import React, { useState, useEffect } from 'react'
-import blogService from './services/blogs'
-import ShowBlogs from './components/showBlogs'
-import Notification from './components/notification'
-import BlogForm from './components/blogForm'
-import LoginForm from './components/loginForm'
-import {changeMessage} from './reducers/notificationReducer'
+import React,{useEffect} from 'react';
 import {connect} from 'react-redux'
 import {initializeBlogs} from './reducers/blogReducer'
-import {initUser} from './reducers/userReducer'
-import {addUser} from './reducers/userReducer'
+import ListBlogs from './components/listBlogs'
+import BlogForm from './components/blogForm'
+import LoginForm from './components/loginForm'
+import {addUser} from './reducers/loginReducer'
+import Notification from './components/notification'
+import blogServices from './services/blogServices'
+import {changeMessage} from './reducers/notificationReducer'
+import ListUsers from './components/listUsers'
+import {initializeUsers} from './reducers/userReducer'
+import {BrowserRouter as Router, Route, Link } from 'react-router-dom'
 
-const App = (props) => {
-  const [user, setUser] = useState(null)
+
+const App = props => {
+
 
  
-
   useEffect(() => {
     props.initializeBlogs()
-  }, [props.blogs])
+    props.initializeUsers()
+}, [])
 
   useEffect(() => {
-    const loggedUserJSON = window.localStorage.getItem('loggedBlogAppUser')
+    const loggedUserJSON = window.localStorage.getItem('loggedInUser')
     if(loggedUserJSON){
       let user = JSON.parse(loggedUserJSON)
-      setUser(user)
+      blogServices.setToken(user.token)
       props.addUser(user)
-      blogService.setToken(user.token)
-    }
-  })
- 
+      props.changeMessage(`welcome back ${user.username}`, 5)
+  }
+}, [])
 
-
-
-
-
-  if (user === null){
-    return(
-      
-        <div>
-          <h1>Login</h1>
-          <Notification/>
-          <LoginForm/>
-      </div>
-    )
-  }else{
-
+const blogsPage = () => {
   return (
     <div>
-      <h2>BLOG-APP</h2>
-      <Notification/>
-      <ShowBlogs/> 
-      <BlogForm/>
-
+    <ListBlogs/>
     </div>
   )
 }
+
+
+const usersPage = () => {
+  return (
+  <div>
+    <ListUsers/>
+  </div>)
 }
 
-const mapStateToProps = state => {
-  return{
-    user: state.user,
-    blogs: state.blogs,
+const createBlog = () => {
+  return(
+    <div>
+      <BlogForm/>
+    </div>
+  )
+}
+
+
+
+  if(!props.user.username){
+  return (
+    <div>
+    <Notification/>
+    <LoginForm/>
+    </div>
+  )
+  }else{
+    return(
+      <Router>
+      <div className="container">
+        <Header/>
+        <LoginForm/>
+        <Route exact path = '/blogs' component = {blogsPage}/>
+        <Route path = '/users' component ={usersPage}/>
+        <Route path = '/createBlog' component = {createBlog}/>
+        
+      </div>
+      </Router>
+    )
   }
+
+}
+
+
+const Header = () => {
+  return (
+    <ul>
+        <Notification/>
+      <li>
+        <Link to = '/blogs'>Blogs</Link>
+      </li>
+      <li>
+        <Link to = '/users'>Users</Link>
+      </li>
+      <li>
+        <Link to = '/createBlog'>Create New</Link>
+      </li>
+    </ul>  
+  )
+}
+const mapStateToProps = state => {
+  return{ 
+    user: state.current_user
+  }
+
 }
 
 const mapDispatchToProps = {
-  changeMessage,
   initializeBlogs,
-  initUser,
-  addUser
+  initializeUsers,
+  addUser,
+  changeMessage
 }
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps,
+  mapDispatchToProps
 )(App)

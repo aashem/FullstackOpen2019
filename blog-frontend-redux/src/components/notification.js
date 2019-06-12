@@ -1,45 +1,38 @@
-import React, {useEffect} from 'react'
-import {clearMessage} from '../reducers/notificationReducer'
+import React,{useEffect} from 'react'
+import {clearNotif} from '../reducers/notificationReducer'
 import {connect} from 'react-redux'
+import {Alert} from 'react-bootstrap'
 
-const Notification = (props) => {
+const Notification = props => {
     let content = props.content
     let time = props.timeout
 
-    useEffect(()=>{
-      setTimeout(()=> {
-        props.clearMessage()
-      }, time)
+    useEffect(()=> {
+        setTimeout(()=>{
+            props.clearNotif()
+        },time)
     }, [props.timeout])
 
-    
-    const style = {
-          background: 'lightgrey',
-          fontSize: '20px',
-          borderStyle: 'solid',
-          borderRadius: '5px',
-          padding: '10px',
-          marginBottom: '10px'
-    }
+   
     if(!content){
-      return <></>
+        return <></>
+    }else{
+        return <Alert variant='success'>{props.content}</Alert>
     }
-    return(<div style= {style}>{content}</div>)
-  }
+  
+}
 
-  const mapStateToProps = state => {
+const mapStateToProps = state => {
     return{
-      content: state.notification.content,
-      timeout: state.notification.timeout
+        content: state.notification.content,
+        timeout: state.notification.timeout
     }
-  }
+}
 
-  const mapDispatchToState = {
-    clearMessage
-  }
-
-
-  export default connect(
+const mapDispatchToProps= {
+    clearNotif
+}
+export default connect(
     mapStateToProps,
-    mapDispatchToState
-  )(Notification)
+    mapDispatchToProps
+)(Notification)
